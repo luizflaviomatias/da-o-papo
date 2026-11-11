@@ -110,7 +110,9 @@ export async function answer(body, { agent = loadAgent(), fetchImpl = fetch, api
   if (data?.stop_reason === 'max_tokens') console.warn('Resposta cortada pelo limite de tamanho', { modo: req.modo, tipos });
   if (!resposta) {
     console.error('Resposta sem texto', { stop_reason: data?.stop_reason, tipos });
-    throw new HttpError(502, 'A resposta veio vazia. Tente perguntar de outro jeito.');
+    const err = new HttpError(502, 'A resposta veio vazia. Tente perguntar de outro jeito.');
+    err.detalhe = { stop_reason: data?.stop_reason ?? null, tipos, skills };
+    throw err;
   }
   return { resposta, modo: req.modo, skills, cortada: data?.stop_reason === 'max_tokens' };
 }

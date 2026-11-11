@@ -56,7 +56,7 @@ const server = createServer(async (req, res) => {
   } catch (err) {
     const status = err instanceof HttpError ? err.status : 500;
     if (status === 500) console.error(err);
-    send(res, status, { erro: err instanceof HttpError ? err.message : 'Erro inesperado. Tente de novo.' });
+    send(res, status, { erro: err instanceof HttpError ? err.message : 'Erro inesperado. Tente de novo.', ...(err.detalhe ? { detalhe: err.detalhe } : {}) });
   }
 });
 
