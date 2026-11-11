@@ -43,7 +43,13 @@
   nav.links a { text-decoration: none; color: var(--suave); font-weight: 600; font-size: 16px; }
   nav.links a:hover { color: var(--primaria); }
   .tema-btn { border: 1px solid var(--borda); background: var(--card); color: var(--texto); border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 15px; cursor: pointer; }
+  .marca span, .tema-btn, nav.links a { white-space: nowrap; }
   @media (max-width: 760px) { nav.links a.esconde { display: none; } }
+  @media (max-width: 480px) {
+    .marca { font-size: 19px; gap: 8px; } .marca svg { width: 30px; height: 30px; }
+    nav.links { gap: 10px; } nav.links a { font-size: 15px; }
+    .tema-btn { padding: 6px 10px; font-size: 14px; }
+  }
 
   .hero { padding: 64px 0 40px; background: radial-gradient(1200px 500px at 85% -10%, color-mix(in srgb, var(--ciano) 25%, transparent), transparent), radial-gradient(800px 400px at -10% 20%, color-mix(in srgb, var(--royal) 18%, transparent), transparent); }
   .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
