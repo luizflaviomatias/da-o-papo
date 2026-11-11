@@ -71,7 +71,7 @@ export const SKILL_KEYWORDS = {
   'ciencia-do-corre': [
     'saude', 'doenca', 'remedio', 'vacina', 'medic', ' sus ', 'ubs', 'posto de saude', ' dor', 'febre', 'diabetes', 'pressao',
     'dengue', ' agua', 'energia', 'conta de luz', 'quimic', 'ciencia', 'aquecimento', 'clima', 'inteligencia artificial',
-    ' ia ', 'tecnologia', 'celular', 'internet', 'gravidez', 'ansiedade', 'depress',
+    ' ia ', 'tecnologia', 'gravidez', 'ansiedade', 'depress',
   ],
 };
 

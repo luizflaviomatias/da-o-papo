@@ -14,6 +14,7 @@ test('carrega o agente e as 9 skills especializadas', () => {
     assert.ok(!agent.skills[n].startsWith('---'), 'frontmatter removido de ' + n);
   }
   assert.match(agent.rules, /Dá o Papo/);
+  assert.match(agent.rules, /Não escreva etiquetas/);
 });
 
 test('normalize tira acentos', () => {
@@ -25,6 +26,7 @@ test('escolhe skills certas para perguntas comuns', () => {
   assert.equal(pickSkills('O patrão me demitiu e não pagou a rescisão')[0], 'advogado-do-corre');
   assert.ok(pickSkills('Quanto fica a dívida do cartão com juros?').includes('economia-do-corre'));
   assert.equal(pickSkills('Me ajuda a escrever um currículo')[0], 'comunicacao-do-corre');
+  assert.ok(!pickSkills('Me ajuda a escrever uma reclamação para a operadora de internet?').includes('ciencia-do-corre'));
   assert.equal(pickSkills('Por que meu bairro alaga quando tem chuva?')[0], 'geografia-do-corre');
   assert.equal(pickSkills('A vacina da dengue é segura?')[0], 'ciencia-do-corre');
   assert.ok(pickSkills('Por que a guerra na Ucrânia aumenta o preço do pão?').includes('geopolitica-do-corre'));

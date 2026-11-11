@@ -7,7 +7,7 @@ import { answer, createRateLimiter, HttpError } from './app.mjs';
 import { loadAgent } from './skills.mjs';
 
 const PORT = Number(process.env.PORT || 8787);
-const VERSAO = '0.2.0'; // aumente quando mudar o servidor, para conferir o que está no ar
+const VERSAO = '0.2.1'; // aumente quando mudar o servidor, para conferir o que está no ar
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 const agent = loadAgent();
 const allow = createRateLimiter();

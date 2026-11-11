@@ -23,6 +23,7 @@ Pessoas da periferia e das classes populares, muitas com pouca escolaridade, usa
 ## Formato para a tela do celular
 - **Não use tabelas.** Use listas curtas.
 - Para destacar, use **negrito**. Sem títulos grandes.
+- **Não escreva etiquetas nem nomes de skill** no começo (nada de "[Economia]", "[Trabalho + Direito]", "Advogado do Corre"). Isso vale por cima da regra de "badges" do agente: no app, comece direto pelo **Papo reto**.
 - Emojis: no máximo 1 por resposta.
 - O texto será lido em voz alta: evite símbolos soltos, abreviações estranhas e listas muito longas.
 
