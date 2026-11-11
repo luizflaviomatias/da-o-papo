@@ -51,6 +51,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import app.daopapo.R
 import app.daopapo.data.Ajustes
 import app.daopapo.ui.theme.Marca
+import kotlinx.coroutines.delay
 
 @Composable
 fun ChatTela(vm: ChatViewModel, ajustes: Ajustes, irParaAjustes: () -> Unit, modifier: Modifier = Modifier) {
@@ -306,9 +308,17 @@ private fun BalaoView(
 
 @Composable
 private fun Pensando() {
+    var demorando by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(8_000)
+        demorando = true
+    }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(start = 6.dp)) {
         CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.5.dp, color = MaterialTheme.colorScheme.tertiary)
-        Text("Pensando na melhor resposta…", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            if (demorando) "O servidor está acordando. Pode levar até 1 minuto na primeira pergunta…" else "Pensando na melhor resposta…",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
     Spacer(Modifier.height(4.dp))
 }

@@ -1,0 +1,25 @@
+# Configuração para colocar o servidor no Render com poucos cliques.
+# Abra: https://render.com/deploy?repo=https://github.com/luizflaviomatias/da-o-papo
+services:
+  - type: web
+    name: da-o-papo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/saude
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - server/**
+        - agent/**
+        - render.yaml
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false # o Render pede a chave na hora; ela nunca fica no GitHub
+      - key: MODEL
+        value: claude-haiku-5-5
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "12"
+      - key: ENABLE_WEB_SEARCH
+        value: "false"

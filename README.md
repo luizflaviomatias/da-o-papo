@@ -28,7 +28,10 @@ O jeito de responder vem do agente **"Voz da Quebrada: Agente do Corre"** (méto
 
 ## Rodar
 
-**Servidor** (Node 20+, sem dependências):
+**Servidor no ar (mais fácil):** [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/luizflaviomatias/da-o-papo)
+O Render lê o `render.yaml`, pede a `ANTHROPIC_API_KEY` e sobe o servidor no plano gratuito. Depois, coloque o endereço (`https://....onrender.com`) em **Ajustes → Servidor da IA** no app.
+
+**Servidor no computador** (Node 20+, sem dependências):
 
 ```bash
 cd server

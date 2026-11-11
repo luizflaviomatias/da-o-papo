@@ -339,7 +339,18 @@
         </ol>
         <p class="nota">Precisa de Android 8 ou mais novo. Esta é uma versão de teste.</p>
 
-        <h3 id="d-servidor">7. Ligar o servidor (para quem vai programar)</h3>
+        <h3 id="d-servidor">7. Ligar o servidor</h3>
+        <h4>Jeito mais fácil: Render (plano gratuito)</h4>
+        <ol>
+          <li>Crie uma chave em <a href="https://console.anthropic.com">console.anthropic.com</a> e coloque um <b>limite de gasto mensal</b> lá mesmo.</li>
+          <li>Abra <a href="https://render.com/deploy?repo=https://github.com/luizflaviomatias/da-o-papo"><b>este link do Render</b></a>, entre com a sua conta do GitHub e autorize o repositório.</li>
+          <li>Quando ele pedir <code>ANTHROPIC_API_KEY</code>, cole a chave <b>só ali</b>. Ela fica guardada no Render e nunca vai para o GitHub.</li>
+          <li>Clique em <b>Deploy</b>. Em alguns minutos aparece o endereço, algo como <code>https://da-o-papo.onrender.com</code>.</li>
+          <li>Teste no navegador: <code>https://SEU-ENDERECO/api/saude</code> deve mostrar <code>"iaConfigurada": true</code>.</li>
+          <li>No app, vá em <b>Ajustes → Servidor da IA</b>, cole o endereço e toque em <b>Salvar</b>.</li>
+        </ol>
+        <p class="aviso">No plano gratuito, o servidor <b>dorme</b> depois de 15 minutos sem uso. A primeira pergunta depois disso pode levar até 1 minuto; o app avisa "o servidor está acordando". Para ficar sempre ligado, é preciso um plano pago.</p>
+        <h4>No computador (para quem vai programar)</h4>
         <p>O servidor é feito em Node.js, sem bibliotecas extras. Precisa de uma chave da API da Anthropic.</p>
 <pre><code>cd server
 export ANTHROPIC_API_KEY="sua-chave"

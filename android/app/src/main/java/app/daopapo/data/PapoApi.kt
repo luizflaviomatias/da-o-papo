@@ -47,8 +47,8 @@ class PapoApi {
         val url = URL(servidor.trimEnd('/') + "/api/perguntar")
         val conexao = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
-            connectTimeout = 15_000
-            readTimeout = 60_000
+            connectTimeout = 30_000 // servidor gratuito pode levar ~1 min para acordar
+            readTimeout = 90_000
             doOutput = true
             setRequestProperty("Content-Type", "application/json; charset=utf-8")
         }
