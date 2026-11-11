@@ -73,7 +73,7 @@ fun AjustesTela(prefs: Preferencias, modifier: Modifier = Modifier) {
 
         Secao("Servidor da IA") {
             Text(
-                "É o endereço do computador que conversa com a inteligência artificial. Deixe em branco para usar o modo demonstração.",
+                "É o endereço do computador que conversa com a inteligência artificial. Já vem preenchido. Deixe em branco para voltar ao endereço padrão.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             OutlinedTextField(
@@ -85,7 +85,11 @@ fun AjustesTela(prefs: Preferencias, modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = { prefs.atualizar { it.copy(servidor = servidor.trim()) }; salvo = true }) { Text("Salvar") }
+                Button(onClick = {
+                    prefs.atualizar { it.copy(servidor = servidor.trim().ifBlank { BuildConfig.DEFAULT_SERVER_URL }) }
+                    servidor = prefs.ajustes.value.servidor
+                    salvo = true
+                }) { Text("Salvar") }
                 if (salvo) Text("Salvo ✓", color = MaterialTheme.colorScheme.tertiary)
             }
         }

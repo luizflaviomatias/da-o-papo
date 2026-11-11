@@ -48,7 +48,10 @@ export function buildPayload(agent, { pergunta, modo, tema, historico }, opts = 
   const marcador = modo === 'completo' ? '[MODO COMPLETO]' : '[MODO CURTO]';
   const payload = {
     model: opts.model || DEFAULTS.model,
-    max_tokens: modo === 'completo' ? 1500 : 450,
+    // Folga de tamanho: o limite de linhas quem controla são as regras do agente, não este número.
+    max_tokens: modo === 'completo' ? 3000 : 1200,
+    // Sem "raciocínio" antes de responder: mais rápido, mais barato e não come o espaço da resposta.
+    thinking: { type: 'disabled' },
     system: buildSystem(agent, skills),
     messages: [...historico, { role: 'user', content: `${marcador}\n${pergunta}` }],
   };
@@ -103,6 +106,11 @@ export async function answer(body, { agent = loadAgent(), fetchImpl = fetch, api
   }
   const data = await res.json();
   const resposta = extractText(data);
-  if (!resposta) throw new HttpError(502, 'A resposta veio vazia. Tente perguntar de outro jeito.');
-  return { resposta, modo: req.modo, skills };
+  const tipos = (data?.content || []).map((b) => b.type).join(',');
+  if (data?.stop_reason === 'max_tokens') console.warn('Resposta cortada pelo limite de tamanho', { modo: req.modo, tipos });
+  if (!resposta) {
+    console.error('Resposta sem texto', { stop_reason: data?.stop_reason, tipos });
+    throw new HttpError(502, 'A resposta veio vazia. Tente perguntar de outro jeito.');
+  }
+  return { resposta, modo: req.modo, skills, cortada: data?.stop_reason === 'max_tokens' };
 }

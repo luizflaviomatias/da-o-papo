@@ -77,11 +77,12 @@ test('valida pedido e arruma histórico', () => {
 test('payload marca o modo e ajusta tamanho', () => {
   const curto = buildPayload(agent, validateRequest({ pergunta: 'hora extra' })).payload;
   assert.match(curto.messages.at(-1).content, /^\[MODO CURTO\]/);
-  assert.equal(curto.max_tokens, 450);
+  assert.equal(curto.max_tokens, 1200);
+  assert.deepEqual(curto.thinking, { type: 'disabled' });
   assert.equal(curto.tools, undefined);
   const completo = buildPayload(agent, validateRequest({ pergunta: 'hora extra', modo: 'completo' }), { webSearch: true }).payload;
   assert.match(completo.messages.at(-1).content, /^\[MODO COMPLETO\]/);
-  assert.equal(completo.max_tokens, 1500);
+  assert.equal(completo.max_tokens, 3000);
   assert.equal(completo.tools[0].type, 'web_search_20250305');
 });
 
@@ -111,6 +112,15 @@ test('answer chama a IA e devolve resposta (com fetch falso)', async () => {
   assert.equal(r.skills[0], 'advogado-do-corre');
   assert.equal(sent.init.headers['x-api-key'], 'teste');
   assert.equal(sent.init.body.model, 'claude-haiku-5-5');
+  assert.equal(r.cortada, false);
+});
+
+test('avisa quando a resposta foi cortada e falha quando só vem raciocínio', async () => {
+  const cortada = async () => ({ ok: true, json: async () => ({ stop_reason: 'max_tokens', content: [{ type: 'text', text: 'Papo reto: a firma tem 10 dias' }] }) });
+  const r = await answer({ pergunta: 'rescisão' }, { agent, fetchImpl: cortada, apiKey: 'k' });
+  assert.equal(r.cortada, true);
+  const soPensou = async () => ({ ok: true, json: async () => ({ stop_reason: 'max_tokens', content: [{ type: 'thinking', thinking: '...' }] }) });
+  await assert.rejects(answer({ pergunta: 'cartão' }, { agent, fetchImpl: soPensou, apiKey: 'k' }), /vazia/);
 });
 
 test('answer sem chave e com erro da IA dá mensagens simples', async () => {

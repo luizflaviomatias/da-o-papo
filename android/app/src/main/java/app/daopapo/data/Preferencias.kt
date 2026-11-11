@@ -25,7 +25,8 @@ class Preferencias(context: Context) {
         tema = runCatching { Tema.valueOf(prefs.getString("tema", Tema.SISTEMA.name)!!) }.getOrDefault(Tema.SISTEMA),
         modoCurto = prefs.getBoolean("modo_curto", true),
         lerEmVozAlta = prefs.getBoolean("ler_voz", false),
-        servidor = prefs.getString("servidor", null) ?: BuildConfig.DEFAULT_SERVER_URL,
+        // Em branco = usa o servidor padrão do app (quem instalou a versão antiga também passa a usar).
+        servidor = prefs.getString("servidor", null)?.takeIf { it.isNotBlank() } ?: BuildConfig.DEFAULT_SERVER_URL,
         aceitouAviso = prefs.getBoolean("aceitou_aviso", false),
     )
 

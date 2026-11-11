@@ -44,7 +44,7 @@ class PapoApi {
             })
         if (tema != null) corpo.put("tema", tema)
 
-        val url = URL(servidor.trimEnd('/') + "/api/perguntar")
+        val url = URL(enderecoBase(servidor) + "/api/perguntar")
         val conexao = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             connectTimeout = 30_000 // servidor gratuito pode levar ~1 min para acordar
@@ -74,5 +74,11 @@ class PapoApi {
         } finally {
             conexao.disconnect()
         }
+    }
+
+    companion object {
+        /** Aceita o endereço do jeito que a pessoa colar: com ou sem "/" ou "/api/saude" no final. */
+        fun enderecoBase(servidor: String): String =
+            servidor.trim().trimEnd('/').replace(Regex("/api(/.*)?$"), "").trimEnd('/')
     }
 }
