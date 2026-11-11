@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dá o Papo · Um amigo que entende das coisas, no seu celular</title>
+<meta name="description" content="Dá o Papo: app de Android que responde dúvidas sobre trabalho, dinheiro, direitos, saúde, cidade e mais, em linguagem simples, com exemplo e próximo passo.">
+<meta name="theme-color" content="#2952E3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%232952E3'/%3E%3Cpath fill='%23fff' d='M34 36h40a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H52L40 82V72h-6a8 8 0 0 1-8-8V44a8 8 0 0 1 8-8z'/%3E%3Ccircle cx='44' cy='54' r='4' fill='%232952E3'/%3E%3Ccircle cx='54' cy='54' r='4.5' fill='%2316C26A'/%3E%3Ccircle cx='64' cy='54' r='4' fill='%232952E3'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --royal: #2952E3; --ciano: #0096C7; --verde: #16C26A;
+    --bg: #F6F8FF; --bg2: #EEF2FC; --card: #FFFFFF; --texto: #121726; --suave: #4A5168;
+    --borda: #DCE2F0; --primaria: #2952E3; --sobre-primaria: #fff; --verde-texto: #0B7A3E;
+    --sombra: 0 10px 30px rgba(20, 40, 120, .10);
+    color-scheme: light;
+  }
+  :root[data-tema="escuro"] {
+    --bg: #0B1020; --bg2: #121829; --card: #161D31; --texto: #E6E9F2; --suave: #AEB5C8;
+    --borda: #2A3350; --primaria: #9DB4FF; --sobre-primaria: #0A1F66; --verde-texto: #3EE68A;
+    --sombra: 0 10px 30px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-tema="claro"]) {
+      --bg: #0B1020; --bg2: #121829; --card: #161D31; --texto: #E6E9F2; --suave: #AEB5C8;
+      --borda: #2A3350; --primaria: #9DB4FF; --sobre-primaria: #0A1F66; --verde-texto: #3EE68A;
+      --sombra: 0 10px 30px rgba(0, 0, 0, .35);
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--texto); font-size: 18px; line-height: 1.6; }
+  a { color: var(--primaria); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--borda); }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 12px; }
+  .marca { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; text-decoration: none; color: var(--texto); }
+  .marca b { color: var(--verde-texto); }
+  .marca svg { width: 36px; height: 36px; }
+  nav.links { display: flex; gap: 18px; align-items: center; }
+  nav.links a { text-decoration: none; color: var(--suave); font-weight: 600; font-size: 16px; }
+  nav.links a:hover { color: var(--primaria); }
+  .tema-btn { border: 1px solid var(--borda); background: var(--card); color: var(--texto); border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 15px; cursor: pointer; }
+  @media (max-width: 760px) { nav.links a.esconde { display: none; } }
+
+  .hero { padding: 64px 0 40px; background: radial-gradient(1200px 500px at 85% -10%, color-mix(in srgb, var(--ciano) 25%, transparent), transparent), radial-gradient(800px 400px at -10% 20%, color-mix(in srgb, var(--royal) 18%, transparent), transparent); }
+  .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+  @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } }
+  .selo { display: inline-block; background: color-mix(in srgb, var(--verde) 18%, transparent); color: var(--verde-texto); font-weight: 700; font-size: 15px; padding: 6px 12px; border-radius: 999px; }
+  h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1.08; margin: 16px 0; letter-spacing: -0.02em; }
+  h1 .v { color: var(--verde-texto); }
+  .lead { font-size: 21px; color: var(--suave); max-width: 560px; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 12px; margin: 26px 0 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px; font-weight: 700; text-decoration: none; font-size: 18px; border: 2px solid transparent; }
+  .btn.verde { background: var(--verde); color: #00391A; }
+  .btn.verde:hover { filter: brightness(1.05); }
+  .btn.contorno { border-color: var(--borda); color: var(--texto); background: var(--card); }
+  .nota { font-size: 15px; color: var(--suave); }
+
+  .celular { justify-self: center; width: 300px; border-radius: 40px; padding: 14px; background: #0d1222; box-shadow: var(--sombra), 0 0 0 2px #232b44 inset; }
+  .tela { border-radius: 28px; overflow: hidden; background: var(--bg2); min-height: 540px; display: flex; flex-direction: column; }
+  .tela .barra { padding: 14px; text-align: center; font-weight: 800; background: var(--card); border-bottom: 1px solid var(--borda); }
+  .tela .barra b { color: var(--verde-texto); }
+  .msgs { padding: 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; font-size: 14px; line-height: 1.45; }
+  .eu { align-self: flex-end; background: var(--royal); color: #fff; padding: 10px 12px; border-radius: 16px 16px 4px 16px; max-width: 85%; }
+  .ele { align-self: flex-start; background: var(--card); padding: 10px 12px; border-radius: 16px 16px 16px 4px; max-width: 92%; border: 1px solid var(--borda); }
+  .ele .botoes { display: flex; gap: 10px; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--primaria); }
+  .ele .botoes span:nth-child(2) { color: var(--verde-texto); }
+  .entrada { display: flex; gap: 8px; padding: 10px; background: var(--card); border-top: 1px solid var(--borda); }
+  .entrada div { flex: 1; border: 1px solid var(--borda); border-radius: 999px; padding: 8px 12px; color: var(--suave); font-size: 13px; }
+  .entrada i { width: 36px; height: 36px; border-radius: 50%; background: var(--verde); display: block; }
+
+  section { padding: 64px 0; }
+  section.alt { background: var(--bg2); }
+  h2 { font-size: clamp(28px, 4vw, 40px); margin: 0 0 10px; letter-spacing: -0.01em; }
+  .sub { color: var(--suave); max-width: 720px; margin-bottom: 30px; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+  .card { background: var(--card); border: 1px solid var(--borda); border-radius: 20px; padding: 22px; box-shadow: var(--sombra); }
+  .card h3 { margin: 6px 0 6px; font-size: 21px; }
+  .card p { margin: 0; color: var(--suave); }
+  .ico { font-size: 30px; }
+  .passos { counter-reset: p; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .passo { position: relative; padding-top: 58px; }
+  .passo::before { counter-increment: p; content: counter(p); position: absolute; top: 18px; left: 22px; width: 32px; height: 32px; border-radius: 50%; background: var(--royal); color: #fff; font-weight: 800; display: grid; place-items: center; }
+  .passo:nth-child(3)::before { background: var(--verde); color: #00391A; }
+  .temas { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tema { background: var(--card); border: 1px solid var(--borda); border-radius: 999px; padding: 10px 16px; font-weight: 600; }
+  .tema small { color: var(--suave); font-weight: 400; }
+
+  .doc { display: grid; grid-template-columns: 240px 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 900px) { .doc { grid-template-columns: 1fr; } .indice { position: static !important; } }
+  .indice { position: sticky; top: 84px; background: var(--card); border: 1px solid var(--borda); border-radius: 16px; padding: 16px; font-size: 16px; }
+  .indice a { display: block; padding: 5px 0; text-decoration: none; color: var(--suave); }
+  .indice a:hover { color: var(--primaria); }
+  .doc article h3 { font-size: 24px; margin: 36px 0 8px; padding-top: 8px; border-top: 1px solid var(--borda); }
+  .doc article h3:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+  .doc article h4 { margin: 20px 0 6px; font-size: 19px; }
+  .doc ul, .doc ol { padding-left: 22px; }
+  .doc li { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; font-size: 16px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borda); vertical-align: top; }
+  th { background: color-mix(in srgb, var(--royal) 12%, var(--card)); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; }
+  code { background: var(--bg2); padding: 2px 6px; border-radius: 6px; }
+  pre { background: #0d1222; color: #E6E9F2; padding: 16px; border-radius: 14px; overflow-x: auto; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .fluxo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0; }
+  .fluxo span { background: var(--card); border: 1px solid var(--borda); border-radius: 12px; padding: 10px 14px; font-weight: 600; font-size: 16px; }
+  .fluxo em { color: var(--suave); font-style: normal; }
+  details { background: var(--card); border: 1px solid var(--borda); border-radius: 14px; padding: 12px 16px; margin: 12px 0; }
+  summary { cursor: pointer; font-weight: 700; }
+  .aviso { border-left: 5px solid var(--verde); background: color-mix(in srgb, var(--verde) 10%, var(--card)); padding: 14px 16px; border-radius: 10px; }
+  footer { padding: 36px 0; border-top: 1px solid var(--borda); color: var(--suave); font-size: 15px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+</style>
+<script>
+  // Aplica o tema salvo antes de desenhar a página (evita piscar).
+  try { const t = localStorage.getItem('tema'); if (t) document.documentElement.dataset.tema = t; } catch (e) {}
+</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="marca" href="#">
+      <svg viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" rx="26" fill="#2952E3"/><path fill="#fff" d="M34 36h40a8 8 0 0 1 8 8v20a8 8 0 0 1-8 8H52L40 82V72h-6a8 8 0 0 1-8-8V44a8 8 0 0 1 8-8z"/><circle cx="44" cy="54" r="4" fill="#2952E3"/><circle cx="54" cy="54" r="4.5" fill="#16C26A"/><circle cx="64" cy="54" r="4" fill="#2952E3"/></svg>
+      <span>Dá o <b>Papo</b></span>
+    </a>
+    <nav class="links">
+      <a class="esconde" href="#como">Como funciona</a>
+      <a class="esconde" href="#faz">O que faz</a>
+      <a href="#documentacao">Documentação</a>
+      <button class="tema-btn" id="temaBtn" type="button" aria-label="Trocar tema claro ou escuro">🌓 Tema</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="selo">Grátis · Android · Em teste</span>
+      <h1>Ficou na dúvida?<br><span class="v">Dá o Papo.</span></h1>
+      <p class="lead">Um amigo que entende das coisas, no seu celular. Pergunte sobre trabalho, dívida, direitos, saúde, bairro, política e mais. A resposta vem simples, com exemplo e o que fazer depois.</p>
+      <div class="acoes">
+        <a class="btn verde" href="https://github.com/luizflaviomatias/da-o-papo/releases/download/ultima-versao/da-o-papo.apk">⬇ Baixar para Android</a>
+        <a class="btn contorno" href="https://github.com/luizflaviomatias/da-o-papo">Ver o código no GitHub</a>
+      </div>
+      <p class="nota">Versão de teste (MVP). Veja abaixo <a href="#instalar">como instalar</a>.</p>
+    </div>
+    <div class="celular" aria-label="Exemplo de conversa no app">
+      <div class="tela">
+        <div class="barra">Dá o <b>Papo</b></div>
+        <div class="msgs">
+          <div class="eu">Trabalho 10 horas por dia e não ganho hora extra. É normal?</div>
+          <div class="ele">
+            <b>Papo reto:</b> passou de 8h por dia, é <b>hora extra</b>, com no mínimo 50% a mais.<br>
+            Com salário de R$ 2.000, 2h extras por dia dão <b>uns R$ 600 por mês</b>.<br>
+            Anote seu horário e procure o sindicato ou a Defensoria.
+            <div class="botoes"><span>🔊 Ouvir</span><span>Explica mais</span><span>Mandar</span></div>
+          </div>
+        </div>
+        <div class="entrada"><div>Escreva sua dúvida…</div><i></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="wrap">
+    <h2>Como funciona</h2>
+    <p class="sub">Simples como mandar mensagem.</p>
+    <div class="passos">
+      <div class="card passo"><h3>Pergunte do seu jeito</h3><p>Escreva ou toque no microfone e fale. Pode usar as suas palavras.</p></div>
+      <div class="card passo"><h3>Receba o papo reto</h3><p>Uma resposta curta, de até 5 linhas, com um exemplo de verdade. Quer mais? Toque em <b>Explica mais</b>.</p></div>
+      <div class="card passo"><h3>Saiba o próximo passo</h3><p>Toda resposta termina com o que fazer: onde ir, o que guardar, qual o prazo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faz" class="alt">
+  <div class="wrap">
+    <h2>O que o app faz</h2>
+    <p class="sub">Feito para celular simples e internet fraca. Letra grande e linguagem do dia a dia.</p>
+    <div class="grade">
+      <div class="card"><div class="ico">💬</div><h3>Perguntar</h3><p>Tire dúvidas por texto ou por voz. Respostas curtas ou completas, como você preferir.</p></div>
+      <div class="card"><div class="ico">🔊</div><h3>Ouvir a resposta</h3><p>O celular lê a resposta em voz alta. Bom para quem prefere ouvir.</p></div>
+      <div class="card"><div class="ico">🧮</div><h3>Fazer conta</h3><p>Hora extra, dívida do cartão e "à vista ou parcelado?". Funciona sem internet.</p></div>
+      <div class="card"><div class="ico">📍</div><h3>Onde ir</h3><p>Telefones de ajuda do Brasil todo: SAMU, CVV, Ligue 180, Disque 100, INSS e mais. Um toque e o número aparece no discador.</p></div>
+      <div class="card"><div class="ico">✍️</div><h3>Escrever pra mim</h3><p>Peça uma reclamação, um currículo ou um pedido para a prefeitura. O texto vem pronto para mandar.</p></div>
+      <div class="card"><div class="ico">🌗</div><h3>Tema claro e escuro</h3><p>Escolha as cores ou deixe igual ao celular. Azul de confiança e verde de "pode ir".</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Sobre o que dá para perguntar</h2>
+    <p class="sub">O Dá o Papo usa um agente com 10 áreas de conhecimento. A ideia de ensinar vem de Paulo Freire: partir da sua vida e aprender junto.</p>
+    <div class="temas">
+      <span class="tema">⚖️ Direitos <small>trabalho, consumidor, aluguel, benefícios</small></span>
+      <span class="tema">💰 Economia <small>juros, dívida, inflação</small></span>
+      <span class="tema">🧮 Matemática <small>porcentagem, parcelas, orçamento</small></span>
+      <span class="tema">✍️ Comunicação <small>reclamação, currículo, golpes</small></span>
+      <span class="tema">🏛️ Política <small>quem cuida do quê, como participar</small></span>
+      <span class="tema">🏙️ Geografia <small>bairro, moradia, calor, enchente</small></span>
+      <span class="tema">🌎 Geopolítica <small>dólar, guerra, preço do pão</small></span>
+      <span class="tema">🔬 Ciência <small>SUS, saúde, energia, água</small></span>
+      <span class="tema">🤔 Filosofia <small>ética, pensar melhor</small></span>
+      <span class="tema">📚 Paulo Freire <small>o jeito de ensinar</small></span>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Segurança e privacidade</h2>
+    <div class="grade">
+      <div class="card"><div class="ico">🔒</div><h3>Nunca pedimos senha</h3><p>O Dá o Papo nunca pede senha, código, cartão ou Pix. Se alguém pedir em nome do app, é golpe.</p></div>
+      <div class="card"><div class="ico">🙈</div><h3>Sem cadastro</h3><p>Não pedimos nome nem CPF. A conversa fica no seu celular e some quando você toca em "Nova conversa".</p></div>
+      <div class="card"><div class="ico">🧭</div><h3>Orienta e encaminha</h3><p>Não substitui advogado nem médico. Em caso sério, mostra onde ir: Defensoria, UBS, Procon.</p></div>
+      <div class="card"><div class="ico">⚖️</div><h3>Sem lado político</h3><p>Explica as ideias de cada lado com justiça. Nunca diz em quem votar.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="documentacao">
+  <div class="wrap">
+    <h2>Documentação</h2>
+    <p class="sub">Como o app funciona por dentro, tela por tela, e como colocar para rodar.</p>
+    <div class="doc">
+      <nav class="indice" aria-label="Índice da documentação">
+        <a href="#d-visao">1. Visão geral</a>
+        <a href="#d-telas">2. Telas e funções</a>
+        <a href="#d-pergunta">3. Caminho de uma pergunta</a>
+        <a href="#d-agente">4. O agente e as skills</a>
+        <a href="#d-linguagem">5. Regras de linguagem</a>
+        <a href="#instalar">6. Como instalar</a>
+        <a href="#d-servidor">7. Ligar o servidor</a>
+        <a href="#d-api">8. API</a>
+        <a href="#d-codigo">9. Organização do código</a>
+        <a href="#d-proximos">10. Próximas etapas</a>
+        <a href="#d-limites">11. Limitações</a>
+      </nav>
+      <article>
+        <h3 id="d-visao">1. Visão geral</h3>
+        <p><b>Dá o Papo</b> é um app de Android que responde dúvidas do dia a dia em linguagem simples. Ele é pensado para pessoas da periferia e das classes populares, inclusive quem tem pouca escolaridade, celular simples ou internet fraca.</p>
+        <p>O app tem três partes:</p>
+        <div class="fluxo"><span>📱 App Android</span><em>→</em><span>🖥️ Servidor do Dá o Papo</span><em>→</em><span>🧠 Inteligência artificial (Claude)</span></div>
+        <ul>
+          <li><b>App:</b> a tela que a pessoa usa. Também tem partes que funcionam sem internet (Contas e Onde ir).</li>
+          <li><b>Servidor:</b> recebe a dúvida, escolhe quais "skills" usar e guarda a chave da IA em segurança.</li>
+          <li><b>IA:</b> escreve a resposta seguindo as regras do agente.</li>
+        </ul>
+        <p class="aviso">Sem servidor configurado, o app entra no <b>modo demonstração</b>: responde alguns exemplos prontos (hora extra, rescisão, juros do cartão, golpes) para dar para testar.</p>
+
+        <h3 id="d-telas">2. Telas e funções</h3>
+        <h4>💬 Perguntar</h4>
+        <ul>
+          <li>Na primeira vez, aparece um <b>aviso</b>: o app explica simples, não é advogado nem médico, nunca pede senha ou Pix, e pode errar.</li>
+          <li><b>Boas-vindas</b> com 10 assuntos prontos (Trabalho, Dívida e dinheiro, Meus direitos, Escrever pra mim, Saúde e SUS, Bairro e cidade, Política, O mundo, Filosofia, Fazer conta). Tocar num assunto preenche uma pergunta de exemplo e avisa o servidor do tema.</li>
+          <li><b>Escrever ou falar:</b> o botão de microfone usa o reconhecimento de voz do celular, em português.</li>
+          <li><b>Resposta curta</b> (padrão, até 5 linhas) ou <b>completa</b>, escolhida em Ajustes.</li>
+          <li>Em cada resposta: <b>Ouvir</b> (lê em voz alta), <b>Explica mais</b> (pede a versão completa) e <b>Mandar</b> (compartilha no WhatsApp ou em outro app).</li>
+          <li>Se der erro (sem internet, servidor lento), aparece uma mensagem simples e o botão <b>Tentar de novo</b>.</li>
+          <li><b>Nova conversa</b> apaga tudo da tela.</li>
+        </ul>
+        <h4>🧮 Contas (funciona sem internet)</h4>
+        <table>
+          <tr><th>Calculadora</th><th>O que pede</th><th>O que mostra</th></tr>
+          <tr><td>Hora extra</td><td>Salário, horas extras por dia, dias no mês, adicional (50%)</td><td>Valor da hora normal e extra, total no mês e no ano. Base: CLT art. 59, 220 horas no mês.</td></tr>
+          <tr><td>Dívida com juros</td><td>Valor, juros ao mês, meses</td><td>Quanto a dívida vira, os juros ao ano e o limite da Lei 14.690/2023 no rotativo do cartão (no máximo o dobro).</td></tr>
+          <tr><td>À vista ou parcelado</td><td>Preço à vista, valor e número de parcelas</td><td>Total parcelado, juros escondidos, taxa por mês e se compensa pagar à vista.</td></tr>
+        </table>
+        <p>Os números podem ser digitados do jeito brasileiro: <code>2000</code>, <code>2.000</code> ou <code>2.000,50</code>.</p>
+        <h4>📍 Onde ir</h4>
+        <p>Lista de serviços que valem no Brasil todo, separados em Emergência, Apoio e proteção, Direitos e dinheiro, e Saúde e cidade. O botão <b>Ligar</b> abre o discador com o número (o app não liga sozinho e não precisa de permissão de telefone).</p>
+        <h4>⚙️ Ajustes</h4>
+        <ul>
+          <li><b>Aparência:</b> igual ao celular, claro ou escuro.</li>
+          <li><b>Respostas curtas</b> e <b>Ler em voz alta</b> (liga e desliga).</li>
+          <li><b>Servidor da IA:</b> endereço do servidor. Em branco = modo demonstração.</li>
+          <li><b>Sobre:</b> privacidade, aviso e versão.</li>
+        </ul>
+
+        <h3 id="d-pergunta">3. Caminho de uma pergunta</h3>
+        <ol>
+          <li>A pessoa escreve ou fala a dúvida no app.</li>
+          <li>O app manda para o servidor a pergunta, o modo (curto ou completo), o assunto escolhido (se houver) e as últimas 8 mensagens da conversa.</li>
+          <li>O servidor procura palavras-chave e escolhe <b>até 2 skills</b> especializadas. Exemplo: "patrão", "demitido", "rescisão" → skill de Direito.</li>
+          <li>O servidor junta as <b>regras do app</b> + o <b>agente principal</b> + as skills escolhidas e envia para a IA.</li>
+          <li>A IA responde e o servidor devolve só o texto para o app.</li>
+          <li>O app mostra a resposta formatada e, se a pessoa quiser, lê em voz alta.</li>
+        </ol>
+        <p>O servidor <b>não guarda</b> perguntas nem respostas. Ele só registra a hora, o modo e quais skills foram usadas, para saber se está tudo funcionando.</p>
+
+        <h3 id="d-agente">4. O agente e as skills</h3>
+        <p>O jeito de responder vem do agente <b>"Voz da Quebrada: Agente do Corre"</b> e das suas skills, que ficam na pasta <code>agent/skills</code> do repositório:</p>
+        <table>
+          <tr><th>Skill</th><th>Para quê</th></tr>
+          <tr><td><code>agente-do-corre</code></td><td>Agente principal: método de Paulo Freire, formato da resposta, modo curto, tom e compromissos de honestidade. Vai em toda pergunta.</td></tr>
+          <tr><td><code>advogado-do-corre</code></td><td>Constituição, CLT, processo penal, consumidor e leis do dia a dia.</td></tr>
+          <tr><td><code>economia-do-corre</code></td><td>Inflação, juros, dívida, crédito, impostos, escolas de pensamento.</td></tr>
+          <tr><td><code>matematica-do-corre</code></td><td>Porcentagem, regra de três, juros, parcelas, orçamento, estatística.</td></tr>
+          <tr><td><code>comunicacao-do-corre</code></td><td>Escrever reclamação, ofício, currículo; checar notícia falsa; golpes.</td></tr>
+          <tr><td><code>filosofia-do-corre</code></td><td>Ética, lógica e falácias, pensamento brasileiro, negro e africano.</td></tr>
+          <tr><td><code>politica-do-corre</code></td><td>Como o Estado funciona, quem cuida do quê, participação, neutralidade.</td></tr>
+          <tr><td><code>geografia-do-corre</code></td><td>Cidade e periferia, moradia, clima, regiões do Brasil.</td></tr>
+          <tr><td><code>geopolitica-do-corre</code></td><td>Poder entre países e como isso chega no preço das coisas.</td></tr>
+          <tr><td><code>ciencia-do-corre</code></td><td>SUS, saúde com base em evidência, ciência do cotidiano, tecnologia.</td></tr>
+        </table>
+        <p>Para mudar o jeito de responder, basta editar esses arquivos de texto. Não precisa mexer no código do app.</p>
+
+        <h3 id="d-linguagem">5. Regras de linguagem</h3>
+        <p>As regras do app ficam em <code>agent/app-rules.md</code> e valem por cima de tudo:</p>
+        <ul>
+          <li>Frases curtas, uma ideia por frase, palavras do dia a dia.</li>
+          <li>Termo difícil é trocado ou explicado na hora: <i>prescrição</i> → "prazo para cobrar na Justiça"; <i>verbas rescisórias</i> → "o dinheiro que a firma te deve quando você sai".</li>
+          <li>Sempre um exemplo com número e um próximo passo.</li>
+          <li>Sem tabelas (a tela é pequena e o texto pode ser lido em voz alta), no máximo 1 emoji.</li>
+          <li>Nunca pede senha, código, cartão ou Pix. Em emergência, manda ligar 192 ou 190 primeiro. Sofrimento emocional: CVV 188.</li>
+          <li>Política: mostra os lados com justiça e nunca diz em quem votar.</li>
+        </ul>
+
+        <h3 id="instalar">6. Como instalar no celular</h3>
+        <ol>
+          <li>No celular Android, toque em <a href="https://github.com/luizflaviomatias/da-o-papo/releases/download/ultima-versao/da-o-papo.apk"><b>Baixar para Android</b></a>.</li>
+          <li>Abra o arquivo <b>da-o-papo.apk</b> que baixou.</li>
+          <li>Se o celular avisar sobre "fontes desconhecidas", toque em <b>Configurações</b> e permita instalar a partir do navegador. Isso acontece porque o app ainda não está na Play Store.</li>
+          <li>Toque em <b>Instalar</b> e depois em <b>Abrir</b>.</li>
+        </ol>
+        <p class="nota">Precisa de Android 8 ou mais novo. Esta é uma versão de teste.</p>
+
+        <h3 id="d-servidor">7. Ligar o servidor (para quem vai programar)</h3>
+        <p>O servidor é feito em Node.js, sem bibliotecas extras. Precisa de uma chave da API da Anthropic.</p>
+<pre><code>cd server
+export ANTHROPIC_API_KEY="sua-chave"
+npm start              # sobe na porta 8787
+npm test               # roda os testes</code></pre>
+        <details>
+          <summary>Variáveis de configuração</summary>
+          <table>
+            <tr><th>Variável</th><th>Padrão</th><th>Para quê</th></tr>
+            <tr><td><code>ANTHROPIC_API_KEY</code></td><td>(obrigatória)</td><td>Chave da IA. Fica só no servidor, nunca no app.</td></tr>
+            <tr><td><code>MODEL</code></td><td><code>claude-haiku-5-5</code></td><td>Modelo da IA. Haiku é rápido e barato; dá para trocar.</td></tr>
+            <tr><td><code>PORT</code></td><td><code>8787</code></td><td>Porta do servidor.</td></tr>
+            <tr><td><code>RATE_LIMIT_PER_MINUTE</code></td><td><code>12</code></td><td>Máximo de perguntas por minuto por aparelho.</td></tr>
+            <tr><td><code>ENABLE_WEB_SEARCH</code></td><td><code>false</code></td><td>Liga a busca na internet para assuntos atuais (custa mais).</td></tr>
+            <tr><td><code>ALLOWED_ORIGIN</code></td><td><code>*</code></td><td>Controle de acesso pelo navegador (CORS).</td></tr>
+          </table>
+        </details>
+        <details>
+          <summary>Rodar com Docker</summary>
+<pre><code>docker build -t da-o-papo-servidor -f server/Dockerfile .
+docker run -p 8787:8787 -e ANTHROPIC_API_KEY="sua-chave" da-o-papo-servidor</code></pre>
+          <p>Serve para colocar em qualquer serviço que rode contêineres (Render, Railway, Fly.io, Google Cloud Run etc.). Depois, coloque o endereço <code>https://...</code> em <b>Ajustes → Servidor da IA</b>.</p>
+        </details>
+        <details>
+          <summary>Testar o app no emulador com servidor no computador</summary>
+          <p>No emulador do Android Studio, o computador é o endereço <code>http://10.0.2.2:8787</code>. Esse endereço já é liberado no app. Em produção, use sempre <code>https</code>.</p>
+        </details>
+
+        <h3 id="d-api">8. API do servidor</h3>
+        <h4><code>POST /api/perguntar</code></h4>
+<pre><code>{
+  "pergunta": "Trabalho 10 horas por dia e não ganho hora extra. É normal?",
+  "modo": "curto",            // "curto" ou "completo"
+  "tema": "trabalho",         // opcional: trabalho, direitos, dinheiro, contas,
+                              // escrever, pensar, politica, cidade, mundo, saude
+  "historico": [              // opcional: últimas mensagens
+    { "role": "user", "content": "..." },
+    { "role": "assistant", "content": "..." }
+  ]
+}</code></pre>
+        <p>Resposta:</p>
+<pre><code>{
+  "resposta": "Papo reto: passou de 8h por dia é hora extra...",
+  "modo": "curto",
+  "skills": ["advogado-do-corre", "matematica-do-corre"]
+}</code></pre>
+        <p>Erros vêm como <code>{"erro": "mensagem simples"}</code>, com código 400 (pedido errado), 429 (muitas perguntas seguidas), 502 ou 503 (IA indisponível).</p>
+        <h4><code>GET /api/saude</code></h4>
+        <p>Mostra se o servidor está no ar, quantas skills carregou e se a chave da IA está configurada.</p>
+
+        <h3 id="d-codigo">9. Organização do código</h3>
+<pre><code>da-o-papo/
+├── agent/                  # o "jeito de responder"
+│   ├── app-rules.md        # regras do app (linguagem simples, segurança)
+│   └── skills/             # agente-do-corre + 9 skills especializadas
+├── server/                 # servidor Node.js (sem dependências)
+│   ├── src/skills.mjs      # carrega e escolhe as skills
+│   ├── src/app.mjs         # valida o pedido e chama a IA
+│   ├── src/index.mjs       # rotas HTTP
+│   └── test/               # testes automáticos
+├── android/                # app Android (Kotlin + Jetpack Compose)
+│   └── app/src/main/java/app/daopapo/
+│       ├── ui/             # telas: Perguntar, Contas, Onde ir, Ajustes
+│       ├── ui/theme/       # cores (azul royal, ciano, verde vivo), claro e escuro
+│       ├── data/           # conversa com o servidor, ajustes, voz, modo demonstração
+│       └── domain/         # calculadoras e lista de serviços
+├── docs/                   # esta página (GitHub Pages)
+└── .github/workflows/      # testes e geração automática do APK</code></pre>
+        <p>A cada mudança enviada ao GitHub, um robô (GitHub Actions) roda os testes do servidor e do app e gera o APK para baixar.</p>
+
+        <h3 id="d-proximos">10. Próximas etapas</h3>
+        <table>
+          <tr><th>Etapa</th><th>O que entra</th></tr>
+          <tr><td><b>Agora (MVP)</b></td><td>App Android com perguntas por texto e voz, resposta curta e completa, ouvir, contas, onde ir, temas claro e escuro.</td></tr>
+          <tr><td><b>Teste no bairro</b></td><td>Servidor no ar, 50 a 200 pessoas testando, ajuste das respostas com o retorno delas.</td></tr>
+          <tr><td><b>Biblioteca de documentos</b></td><td>A IA consulta as leis e apostilas do projeto antes de responder (CLT, Constituição, CPP e outros materiais).</td></tr>
+          <tr><td><b>WhatsApp</b></td><td>O mesmo agente num número de WhatsApp, para quem não quer baixar app.</td></tr>
+          <tr><td><b>"Onde eu vou?" por CEP</b></td><td>Endereço da Defensoria, CRAS, UBS e Procon mais perto.</td></tr>
+          <tr><td><b>Play Store</b></td><td>Publicação oficial, ícone final e personagem do app.</td></tr>
+        </table>
+
+        <h3 id="d-limites">11. Limitações conhecidas</h3>
+        <ul>
+          <li>A IA pode errar. As respostas orientam, mas não substituem advogado, médico ou contador.</li>
+          <li>Sem a busca na internet ligada, a IA pode não saber valores e notícias recentes. As regras mandam avisar quando isso acontece.</li>
+          <li>A voz (ouvir e falar) depende dos recursos do próprio celular.</li>
+          <li>O APK de teste é assinado com chave de desenvolvimento. Para a Play Store será preciso uma chave oficial.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Dá o Papo · código aberto (licença MIT)</span>
+    <span>Inspirado em Paulo Freire: ninguém educa ninguém sozinho.</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const raiz = document.documentElement;
+    const btn = document.getElementById('temaBtn');
+    function escuroAgora() {
+      const t = raiz.dataset.tema;
+      if (t) return t === 'escuro';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    function rotulo() { btn.textContent = escuroAgora() ? '☀️ Claro' : '🌙 Escuro'; }
+    btn.addEventListener('click', function () {
+      raiz.dataset.tema = escuroAgora() ? 'claro' : 'escuro';
+      try { localStorage.setItem('tema', raiz.dataset.tema); } catch (e) {}
+      rotulo();
+    });
+    rotulo();
+  })();
+</script>
+</body>
+</html>

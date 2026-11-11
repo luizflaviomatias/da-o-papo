@@ -1,0 +1,55 @@
+name: Testes e APK
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  servidor:
+    name: Testes do servidor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+        working-directory: server
+
+  android:
+    name: App Android (testes + APK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+      - name: Testes e build
+        working-directory: android
+        run: gradle --no-daemon testDebugUnitTest assembleDebug
+      - name: Renomear APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk da-o-papo.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: da-o-papo-apk
+          path: da-o-papo.apk
+      - name: Publicar APK (versão de teste)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ultima-versao
+          name: Dá o Papo · versão de teste mais recente
+          prerelease: true
+          body: |
+            APK de teste gerado automaticamente a partir do commit ${{ github.sha }}.
+            Para instalar: baixe o arquivo **da-o-papo.apk** no celular Android e abra.
+          files: da-o-papo.apk
