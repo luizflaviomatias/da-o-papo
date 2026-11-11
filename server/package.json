@@ -1,6 +1,6 @@
 {
   "name": "da-o-papo-servidor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Servidor do Dá o Papo: recebe a dúvida do app, escolhe as skills e pergunta para a IA.",
   "type": "module",
   "main": "src/index.mjs",

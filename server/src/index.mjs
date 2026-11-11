@@ -7,6 +7,7 @@ import { answer, createRateLimiter, HttpError } from './app.mjs';
 import { loadAgent } from './skills.mjs';
 
 const PORT = Number(process.env.PORT || 8787);
+const VERSAO = '0.2.0'; // aumente quando mudar o servidor, para conferir o que está no ar
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 const agent = loadAgent();
 const allow = createRateLimiter();
@@ -41,7 +42,7 @@ const server = createServer(async (req, res) => {
     if (req.method === 'OPTIONS') return send(res, 204, {});
     const url = new URL(req.url, 'http://localhost');
     if (req.method === 'GET' && url.pathname === '/api/saude') {
-      return send(res, 200, { ok: true, skills: Object.keys(agent.skills).length, iaConfigurada: Boolean(process.env.ANTHROPIC_API_KEY) });
+      return send(res, 200, { ok: true, versao: VERSAO, skills: Object.keys(agent.skills).length, iaConfigurada: Boolean(process.env.ANTHROPIC_API_KEY) });
     }
     if (req.method === 'POST' && url.pathname === '/api/perguntar') {
       const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
