@@ -54,6 +54,11 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
     val tela: StateFlow<TelaChat> = _tela.asStateFlow()
     private var proximoId = 1L
 
+    init {
+        // Acorda o servidor assim que o app abre, para a primeira resposta vir mais rápido.
+        viewModelScope.launch { api.acordar(prefs.ajustes.value.servidor) }
+    }
+
     fun escolherTema(tema: TemaRapido?) = _tela.update { it.copy(tema = tema?.chave) }
 
     fun perguntar(texto: String) {
